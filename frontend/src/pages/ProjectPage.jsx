@@ -1,6 +1,42 @@
 import React, { useState } from "react";
-
+import Calendar from "react-calendar";
+import { Bar } from "react-chartjs-2";
+import "react-calendar/dist/Calendar.css";
+import 'react-calendar/dist/Calendar.css'; // still needed to prevent layout breaks
+import './CustomCalendar.css'; // 👈 custom CSS for fine control
+import { Chart as ChartJS, BarElement, CategoryScale, LinearScale } from "chart.js";
+ChartJS.register(BarElement, CategoryScale, LinearScale);
 const ProjectPage = () => {
+const [date, setDate] = React.useState(new Date());
+
+  const data = {
+    labels: ["Team A", "Team B", "Team C", "Team D", "Team E", "Team F", "Team G"],
+    datasets: [
+      {
+        label: "Value",
+        data: [12, 19, 3, 5, 3, 7, 8],
+        backgroundColor: "#a78bfa", // purple-400
+        borderRadius: 5,
+        barThickness: 30,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+    },
+    scales: {
+      y: {
+        ticks: { beginAtZero: true },
+        grid: { drawBorder: false },
+      },
+      x: {
+        grid: { display: false },
+      },
+    },
+  };
   const resources = [
     {
       name: "Alice Johnson",
@@ -400,6 +436,32 @@ const ProjectPage = () => {
           </div> */}
         </div>
       </div>
+ <div className="bg-indigo-50 p-6 rounded-xl flex flex-col md:flex-row gap-6">
+      {/* Calendar Card */}
+      <div className="bg-white p-6 rounded-xl shadow-md w-full md:w-1/2">
+        <h2 className="text-3xl font-semibold mb-4">Project Timeline View</h2>
+        <div className="flex justify-center py-24">
+        <Calendar
+        onChange={setDate}
+        value={date}
+        next2Label={null}
+        prev2Label={null}
+        className="custom-calendar px-24"
+        tileClassName={({ date: tileDate, view }) =>
+          view === "month" && tileDate.toDateString() === new Date().toDateString()
+            ? "today-tile"
+            : ""
+        }
+      />
+        </div>
+      </div>
+
+      {/* Chart Card */}
+      <div className="bg-white p-6 rounded-xl shadow-md w-full md:w-1/2">
+        <h2 className="text-3xl font-semibold mb-4">Team Workload Distribution</h2>
+        <Bar data={data} options={options} />
+      </div>
+    </div>
     </div>
   );
 };

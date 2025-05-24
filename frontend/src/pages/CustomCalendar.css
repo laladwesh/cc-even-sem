@@ -1,0 +1,49 @@
+/* Removes borders and sets general spacing */
+.custom-calendar {
+  border: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  width: fit-content;
+  padding: 0;
+  margin: auto;
+}
+
+/* Calendar tile buttons */
+.custom-calendar .react-calendar__tile {
+  padding: 0.5rem 0.6rem;
+  border-radius: 9999px;
+  transition: background-color 0.3s ease;
+}
+
+.custom-calendar .react-calendar__tile:enabled:hover {
+  background-color: #f3f4f6; /* gray-100 */
+}
+
+/* Highlight the selected date */
+.custom-calendar .react-calendar__tile--active {
+  background-color: #a78bfa !important; /* purple-400 */
+  color: white !important;
+  border-radius: 9999px;
+}
+
+/* Remove navigation arrows */
+.custom-calendar .react-calendar__navigation__label,
+.custom-calendar .react-calendar__navigation__arrow {
+  font-weight: 500;
+}
+
+.custom-calendar .react-calendar__navigation {
+  margin-bottom: 0.5rem;
+}
+
+.custom-calendar .react-calendar__month-view__weekdays {
+  text-transform: none;
+  font-weight: 500;
+  color: #6b7280; /* gray-500 */
+}
+
+.today-tile {
+  background-color: #a78bfa !important;
+  color: white !important;
+  border-radius: 9999px;
+}
