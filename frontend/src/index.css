@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('./assets/Satoshi-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('./assets/Satoshi-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+ * {
+  font-family: 'Satoshi', sans-serif;
+  
+}
+
+/* Hide scrollbar across modern browsers */
+html {
+  scrollbar-width: none; /* Firefox */
+}
+
+body {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}
+
+.cl-internal-4x6jej {
+  display: none;
+}
+.cl-internal-df7v37{
+    display: none;
+}
+.cl-internal-1dauvpw{
+    display: none;
+}
+.custom-toast .Toastify__toast-icon svg {
+  fill: #5230B2; /* Your tick icon color */
+}
+.cl-internal-1uc1z6l{
+  display: none;
+}
+.cl-internal-w4f4gh{
+  display: none;
+}
+/* .cl-internal-1p733cp{
+  
+} */
