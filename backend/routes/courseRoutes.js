@@ -14,6 +14,10 @@ cloudinary.config({
 });
 const courseController = require("../controllers/courseController");
 const { ClerkExpressRequireAuth } = require("@clerk/clerk-sdk-node");
+const { ensureAdmin } = require("../middleware/auth");
+
+router.get('/admin', ClerkExpressRequireAuth(), ensureAdmin , courseController.getAllCoursesAdmin);
+router.patch('/:id', ClerkExpressRequireAuth(), ensureAdmin ,  courseController.editCourseAdmin);
 router.get("/", ClerkExpressRequireAuth(), courseController.getAllCourses);
 router.post(
   "/:id/enroll",
@@ -39,5 +43,4 @@ router.patch(
 
 router.post("/upload", upload.single("file"), courseController.uploadResource);
 router.post("/", ClerkExpressRequireAuth(), courseController.createCourse);
-
 module.exports = router;
