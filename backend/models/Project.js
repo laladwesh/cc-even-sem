@@ -1,5 +1,20 @@
 const mongoose = require('mongoose');
 
+
+const resourceSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true
+  },
+  link: {
+    type: String,
+    required: true
+  },
+  topics: {
+    type: [String],    // duration in minutes
+    required: true
+  }
+}, { _id: false });  // no separate ObjectId for each section
 const projectSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -26,7 +41,7 @@ const projectSchema = new mongoose.Schema({
     type: Number,
     default: 0, // Admin-level or system-wide progress
   },
-
+  resources : [resourceSchema],
   badge: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Badge',
