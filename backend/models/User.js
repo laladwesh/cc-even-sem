@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -25,8 +25,8 @@ const userSchema = new mongoose.Schema({
 
   role: {
     type: String,
-    enum: ['admin', 'manager', 'employee'],
-    default: 'employee',
+    enum: ["admin", "manager", "employee"],
+    default: "employee",
   },
 
   skills: [String], // e.g., ["React", "Node.js"]
@@ -39,50 +39,59 @@ const userSchema = new mongoose.Schema({
   badges: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Badge',
-    }
+      ref: "Badge",
+    },
   ],
 
   enrolledCourses: [
     {
       courseId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course',
+        ref: "Course",
       },
       progress: {
         type: Number,
         default: 0,
       },
-    }
+      completedSections: [ Number ]
+    },
+  ],
+  favouriteCourses: [
+    {
+      courseId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+      },
+    },
   ],
 
   assignedProjects: [
     {
       projectId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Project',
+        ref: "Project",
       },
       progress: {
         type: Number,
         default: 0,
       },
-    }
+    },
   ],
 
-  avatarUrl: {
+  imageUrl: {
     type: String,
-    default: '',
+    default: "",
   },
-
+  clerkId: { type: String, required: true, unique: true },
   createdAt: {
     type: Date,
     default: Date.now,
-  }
+  },
 });
 
 // 🔐 Hash password before saving
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
@@ -92,6 +101,6 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);
 // This schema defines the structure of a User document in MongoDB.
 // It includes fields for name, email, password, phone, role, skills, experience,
