@@ -8,7 +8,7 @@ const { clerkMiddleware } = require( "@clerk/express");
 const { ClerkExpressRequireAuth } = require('@clerk/clerk-sdk-node');
 const { clerkClient } = require('@clerk/clerk-sdk-node');
 require('dotenv').config();
-
+const { ensureSignedIn, ensureAdmin } = require('./middleware/auth');
 clerkClient.apiKey = process.env.CLERK_API_KEY;
 // Load env
 dotenv.config();
@@ -52,6 +52,10 @@ app.use(express.json()); // Parse JSON
 app.use(morgan('dev'));
 
 // Route files
+app.get("/api/admin-only", ClerkExpressRequireAuth() ,ensureAdmin, (req, res) => {
+  res.json({ secret: "this is for admins only" });
+});
+
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 app.use('/api/auth', require('./routes/authRoutes'));
