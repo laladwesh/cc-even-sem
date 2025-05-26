@@ -1,37 +1,81 @@
-const Course = require('../models/Course');
-const User = require('../models/User');
-const cloudinary = require('../utils/cloudinary');
+const { default: mongoose } = require("mongoose");
+const Course = require("../models/Course");
+const User = require("../models/User");
+const cloudinary = require("../utils/cloudinary");
 
-// @desc    Create a new course (Admin only)
-// @route   POST /api/courses
-// @access  Admin
+
+const streamifier = require('streamifier');
+
+// ── 1) Upload a chapter resource to Cloudinary ───────────────────────────
+const uploadResource = async (req, res) => {
+  try {
+    // multer has put the file buffer on req.file
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder: 'courses' },
+      (error, result) => {
+        if (error) return res.status(500).json({ error });
+        console.log(result.secure_url);
+        res.json({ url: result.secure_url });
+      }
+    );
+    streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
+  } catch (err) {
+    console.error('uploadResource error:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ── 2) Create a new course with sections ────────────────────────────────
 const createCourse = async (req, res) => {
   try {
-    const { title, description, skillLevel } = req.body;
-
-    let thumbnailUrl = '';
-    if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        resource_type: 'image',
-        folder: 'companygrow/courses/thumbnails'
-      });
-      thumbnailUrl = result.secure_url;
+    // 1️⃣ identify your creator
+    const clerkId = req.auth.userId;
+    const user    = await User.findOne({ clerkId }).exec();
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
 
+    // 2️⃣ pull fields off the body
+    const {
+      title,
+      thumbnail,
+      description,
+      category,
+      skillTags = [],
+      duration,
+      sections = []
+    } = req.body;
+
+    // 3️⃣ build and save
     const course = new Course({
       title,
+      thumbnail,
       description,
-      skillLevel,
-      createdBy: req.user._id,
-      thumbnail: thumbnailUrl, // Ensure Course schema has 'thumbnail'
+      category,
+      skillTags,
+      duration,
+      sections,       // each section = { title, duration, link }
+      createdBy: user._id,
+      createdAt: Date.now()
     });
 
     await course.save();
-    res.status(201).json(course);
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating course', error: error.message });
+
+    // 4️⃣ respond with the new doc
+    res.status(201).json({ course });
+  } catch (err) {
+    console.error('createCourse error:', err);
+    res
+      .status(500)
+      .json({ message: 'Error creating course', error: err.message });
   }
 };
+
+
+
+
+
+
 
 
 // @desc    Get all courses
@@ -39,132 +83,198 @@ const createCourse = async (req, res) => {
 // @access  Private
 const getAllCourses = async (req, res) => {
   try {
+    const userId = req.auth.userId;
+    const user = await User.findOne({ clerkId: userId });
     const courses = await Course.find().sort({ createdAt: -1 });
-    res.status(200).json(courses);
+    res.status(200).json({ courses, user });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching courses', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching courses", error: error.message });
   }
 };
 
 // @desc    Enroll user in a course
 // @route   POST /api/courses/enroll/:id
 // @access  Private
+
 const enrollInCourse = async (req, res) => {
   try {
-    const courseId = req.params.id;
-    const user = await User.findById(req.user._id);
-
-    if (!user.enrolledCourses.includes(courseId)) {
-      user.enrolledCourses.push(courseId);
-      await user.save();
+    const courseObjId = new mongoose.Types.ObjectId(req.params.id);
+    const course = await Course.findById(courseObjId);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
     }
 
-    res.status(200).json({ message: 'Enrolled successfully' });
+    const user = await User.findOne({ clerkId: req.auth.userId });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    course.enrolledUsers.push({
+      userId: user._id,
+      enrolledAt: new Date(),
+      progress: 0, // Default progress
+    });
+    await course.save();
+    const already = user.enrolledCourses.some((c) => c._id.equals(courseObjId));
+    if (already) {
+      return res
+        .status(400)
+        .json({ message: "Already enrolled in this course" });
+    }
+    user.enrolledCourses.push({ _id: courseObjId, progress: 0 });
+    await user.save();
+
+    return res.status(200).json({ message: "Enrolled successfully" });
   } catch (error) {
-    res.status(500).json({ message: 'Error enrolling in course', error: error.message });
+    console.error("Error enrolling in course:", error);
+    return res
+      .status(500)
+      .json({ message: "Error enrolling in course", error: error.message });
   }
 };
 
-// @desc    Update course progress for a user and award badge if completed
-// @route   PUT /api/courses/progress/:id
+// @desc    Add a course to user's favourites
+// @route   POST /api/courses/enroll/fav/:id
 // @access  Private
-const updateProgress = async (req, res) => {
+const addFavCourse = async (req, res) => {
+  try {
+    // 1. Convert to ObjectId
+    const courseObjId = new mongoose.Types.ObjectId(req.params.id);
+
+    // 2. Find user
+    const user = await User.findOne({ clerkId: req.auth.userId });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // 3. Check for existing favourite
+    const alreadyFav = user.favouriteCourses.some((fc) =>
+      fc.courseId.equals(courseObjId)
+    );
+    if (alreadyFav) {
+      return res.status(400).json({ message: "Course already in favourites" });
+    }
+
+    // 4. Add to favourites & save
+    user.favouriteCourses.push({ courseId: courseObjId });
+    await user.save();
+
+    return res.status(200).json({ message: "Added to favourites" });
+  } catch (error) {
+    console.error("Error adding favourite course:", error);
+    return res
+      .status(500)
+      .json({ message: "Error adding to favourites", error: error.message });
+  }
+};
+
+const removeFavCourse = async (req, res) => {
+  try {
+    const courseObjId = new mongoose.Types.ObjectId(req.params.id);
+    const user = await User.findOne({ clerkId: req.auth.userId });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // not in favourites?
+    const idx = user.favouriteCourses.findIndex((fc) =>
+      fc.courseId.equals(courseObjId)
+    );
+    if (idx === -1) {
+      return res.status(400).json({ message: "Course not in favourites" });
+    }
+
+    // remove it
+    user.favouriteCourses.splice(idx, 1);
+    await user.save();
+
+    return res.status(200).json({ message: "Removed from favourites" });
+  } catch (error) {
+    console.error("Error removing favourite course:", error);
+    return res
+      .status(500)
+      .json({
+        message: "Error removing from favourites",
+        error: error.message,
+      });
+  }
+};
+
+
+//getcoursebyid
+const getCourseById = async (req, res) => {
   try {
     const courseId = req.params.id;
-    const { progress } = req.body;
+    const userId = req.auth.userId;
+const courseObjId = new mongoose.Types.ObjectId(req.params.id);
+    const user = await User.findOne({ clerkId: userId });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const course = await Course.findById(courseId , 'thumbnail title sections category skillTags description duration');
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+     const ec = user.enrolledCourses.find(ec => ec._id?.equals(courseId)) || {};
+    const already = user.enrolledCourses.some((c) => c._id.equals(courseObjId));
+console.log("enrolled " , already)
+    res.status(200).json({course, already ,  completedSections: ec.completedSections || [],
+    progress: ec.progress || 0});
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching course", error: error.message });
+  }
+};
 
-    const user = await User.findById(req.user._id).populate('badges');
-    const course = await Course.findById(courseId);
-    if (!course) return res.status(404).json({ message: 'Course not found' });
 
-    let courseProgress = user.courseProgress.find(cp => cp.course.toString() === courseId);
+// @desc    Toggle section completion for a user
+// @route   PATCH /api/courses/:id/sections/:sectionIdx
+// @access  Private
+const toggleSection = async (req, res) => {
+  try {
+    const courseId     = req.params.id;
+    const secIdx       = parseInt(req.params.sectionIdx, 10);
+    const clerkUserId  = req.auth.userId;
 
-    if (courseProgress) {
-      courseProgress.progress = progress;
+    const user = await User.findOne({ clerkId: clerkUserId });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+console.log("user", user)
+    const uc = user.enrolledCourses.find(ec =>
+      ec?._id?.equals(courseId)
+    );
+    if (!uc) return res.status(400).json({ message: 'Not enrolled in course' });
+
+    const idx = uc.completedSections.indexOf(secIdx);
+    if (idx > -1) {
+      uc.completedSections.splice(idx, 1);
     } else {
-      user.courseProgress.push({ course: courseId, progress });
+      uc.completedSections.push(secIdx);
     }
-
-    // 🧠 Award badge if course completed and not already awarded
-    if (
-      progress >= 100 &&
-      !user.badges.some(b => b.title === `Completed: ${course.title}`)
-    ) {
-      const Badge = require('../models/Badge');
-      const newBadge = new Badge({
-        title: `Completed: ${course.title}`,
-        description: `Successfully completed ${course.title}`,
-        points: 50,
-        user: user._id,
-      });
-      await newBadge.save();
-
-      user.badges.push(newBadge._id);
-      user.performanceScore += 50;
-    }
+    const course = await Course.findById(courseId).select('sections').lean();
+    const totalSecs = course.sections.length;
+    uc.progress = Math.round((uc.completedSections.length / totalSecs) * 100);
 
     await user.save();
-    res.status(200).json({ message: 'Progress updated successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating progress', error: error.message });
-  }
-};
 
-
-// @desc    Upload a file for a course (PDF/video/etc)
-// @route   POST /api/courses/upload/:id
-// @access  Admin
-const uploadCourseFile = async (req, res) => {
-  try {
-    const courseId = req.params.id;
-    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
-
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      resource_type: 'auto',
-      folder: 'companygrow/courses'
+    return res.json({
+      completedSections: uc.completedSections,
+      progress: uc.progress
     });
-
-    const course = await Course.findById(courseId);
-    if (!course) return res.status(404).json({ message: 'Course not found' });
-
-    course.materials.push({ url: result.secure_url, type: req.file.mimetype });
-    await course.save();
-
-    res.status(200).json({ message: 'File uploaded', url: result.secure_url });
-  } catch (error) {
-    res.status(500).json({ message: 'Upload failed', error: error.message });
-  }
-};
-const deleteCourse = async (req, res) => {
-  try {
-    const courseId = req.params.id;
-
-    const course = await Course.findById(courseId);
-    if (!course) {
-      return res.status(404).json({ message: 'Course not found' });
-    }
-
-    // Optional: Check if the user has permission to delete (admin or creator)
-    if (
-      req.user.role !== 'admin' &&
-      String(course.createdBy) !== String(req.user._id)
-    ) {
-      return res.status(403).json({ message: 'Not authorized to delete this course' });
-    }
-
-    await course.remove();
-
-    res.status(200).json({ message: 'Course deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: 'Error deleting course', error: err.message });
+    console.error(err);
+    res.status(500).json({ message: 'Error toggling section', error: err.message });
   }
 };
+
+
 
 module.exports = {
   createCourse,
   getAllCourses,
   enrollInCourse,
-  updateProgress,
-  uploadCourseFile,
-  deleteCourse
+  addFavCourse,
+  removeFavCourse,
+  getCourseById,
+  toggleSection,
+  uploadResource,
 };
