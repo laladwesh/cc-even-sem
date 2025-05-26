@@ -267,6 +267,73 @@ console.log("user", user)
 };
 
 
+const getAllCoursesAdmin = async (req, res) => {
+  try {
+    const courses = await Course.find();
+    res.status(200).json({ courses });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching courses", error: error.message });
+  }
+};
+
+
+
+const editCourseAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      title,
+      thumbnail,
+      description,
+      category,
+      skillTags,
+      duration,
+      sections
+    } = req.body;
+
+    // Build an update object only with provided fields
+    const updates = {};
+    if (title !== undefined)       updates.title       = title;
+    if (thumbnail !== undefined)   updates.thumbnail   = thumbnail;
+    if (description !== undefined) updates.description = description;
+    if (category !== undefined)    updates.category    = category;
+    if (skillTags !== undefined)   updates.skillTags   = Array.isArray(skillTags)
+                                            ? skillTags
+                                            : skillTags.split(',').map(s => s.trim()).filter(Boolean);
+    if (duration !== undefined)    updates.duration    = duration;
+    if (sections !== undefined)    updates.sections    = Array.isArray(sections)
+                                            ? sections
+                                            : [];
+
+    // Find by ID and apply updates
+    const course = await Course.findByIdAndUpdate(
+      id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    ).exec();
+
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    res.status(200).json({ course });
+  } catch (err) {
+    console.error('editCourseAdmin error:', err);
+    if (err.name === 'CastError') {
+      return res.status(400).json({ message: 'Invalid course ID', error: err.message });
+    }
+    res.status(500).json({ message: 'Error updating course', error: err.message });
+  }
+};
+
+
+
+
+
+
+
 
 module.exports = {
   createCourse,
@@ -277,4 +344,6 @@ module.exports = {
   getCourseById,
   toggleSection,
   uploadResource,
+  getAllCoursesAdmin,
+  editCourseAdmin
 };
