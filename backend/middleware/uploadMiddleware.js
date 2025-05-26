@@ -1,15 +1,19 @@
 const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const cloudinary = require('../utils/cloudinary');
+const path = require('path');
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: 'companygrow_uploads',
-    allowed_formats: ['jpg', 'png', 'pdf'],
+// store file temporarily in memory
+const storage = multer.memoryStorage();
+
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (['.jpg', '.jpeg', '.png', '.pdf'].includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only images and PDFs are allowed'));
+    }
   },
 });
-
-const upload = multer({ storage });
 
 module.exports = upload;
