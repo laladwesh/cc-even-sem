@@ -39,6 +39,19 @@ exports.syncClerkUser = async (req, res) => {
 };
 
 
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({ role: 'employee'}).select('-password');
+    if (!users || users.length === 0) {
+      return res.status(404).json({ msg: 'No users found' });
+    }
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ msg: 'Failed to fetch users', error: err.message });
+  }
+}
+
+
 
 exports.getProfile = async (req, res) => {
   try {
