@@ -4,7 +4,12 @@ const cors = require('cors');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 const path = require('path');
+const { clerkMiddleware } = require( "@clerk/express");
+const { ClerkExpressRequireAuth } = require('@clerk/clerk-sdk-node');
+const { clerkClient } = require('@clerk/clerk-sdk-node');
+require('dotenv').config();
 
+clerkClient.apiKey = process.env.CLERK_API_KEY;
 // Load env
 dotenv.config();
 
@@ -12,6 +17,7 @@ dotenv.config();
 connectDB();
 
 const app = express();
+
 const rateLimit = require('express-rate-limit');
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -19,7 +25,10 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, try again later.',
 });
 app.use(limiter);
-
+app.use(clerkMiddleware({
+  secretKey: process.env.CLERK_SECRET_KEY,   // <-- your secret key
+  publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+}));
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const helmet = require('helmet');
