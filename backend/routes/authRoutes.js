@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-
+const { requireAuth } = require("@clerk/express");
 const { protect } = require('../middleware/authMiddleware');
 router.post('/register', authController.register);
 router.post('/login', authController.login);
-router.get('/profile', protect, authController.getProfile);
-
+router.get('/profile',requireAuth(), authController.getProfile);
+router.post('/sync' , requireAuth() , authController.syncClerkUser);
 module.exports = router;
