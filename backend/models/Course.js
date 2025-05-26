@@ -1,5 +1,22 @@
 const mongoose = require('mongoose');
 
+
+const sectionSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true
+  },
+  link: {
+    type: String,
+    required: true
+  },
+  duration: {
+    type: Number,    // duration in minutes
+    required: true
+  }
+}, { _id: false });  // no separate ObjectId for each section
+
+
 const courseSchema = new mongoose.Schema({
   thumbnail: { type: String },
   title: {
@@ -33,7 +50,7 @@ const courseSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Badge',
   },
-
+sections: [sectionSchema], // Array of sections with title, link, and duration
   enrolledUsers: [
     {
       userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
