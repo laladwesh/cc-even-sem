@@ -1,11 +1,15 @@
+// routes/adminRoutes.js
 const express = require('express');
+const { ClerkExpressRequireAuth } = require('@clerk/clerk-sdk-node');
+const { ensureAdmin } = require('../middleware/auth');
+const { getAnalytics } = require('../controllers/adminController');
 const router = express.Router();
-const adminController = require('../controllers/adminController');
-const { protect, checkRole } = require('../middleware/authMiddleware');
-const { adminOnly } = require('../middleware/roleMiddleware');
 
-// Admin-only user management
-router.get('/users', protect,checkRole(['admin']), adminController.getAllUsers);
-router.delete('/users/:id', protect, checkRole(['admin' , 'manager']), adminController.deleteUser);
+router.get(
+  '/analytics',
+  ClerkExpressRequireAuth(),
+  ensureAdmin,
+  getAnalytics
+);
 
 module.exports = router;
