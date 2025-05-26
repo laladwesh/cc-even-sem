@@ -1,12 +1,44 @@
 // backend/controllers/authController.js
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-
+const { getAuth } = require('@clerk/express');
+const { clerkClient } = require('@clerk/clerk-sdk-node');
 const generateToken = (user) => {
   return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
     expiresIn: '7d'
   });
 };
+exports.syncClerkUser = async (req, res) => {
+  try {
+    // 1. getAuth(req) → { userId, sessionId, ... }
+    const { userId } = getAuth(req);
+
+    // 2. fetch the “full” user from Clerk
+    const clerkUser = await clerkClient.users.getUser(userId);
+    const { emailAddresses, firstName, lastName, imageUrl, createdAt } = clerkUser;
+    const email = emailAddresses[0]?.emailAddress || "";
+
+    // 3. upsert in your Mongo
+    const user = await User.findOneAndUpdate(
+      { clerkId: userId },
+      {
+        clerkId:  userId,
+        email,
+        name:     `${firstName || ""} ${lastName || ""}`.trim(),
+        imageUrl: imageUrl,
+        joinedAt: createdAt,
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    return res.status(200).json({ synced: true, user });
+  } catch (err) {
+    console.error("Failed to sync Clerk user:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
 
 exports.getProfile = async (req, res) => {
   try {
