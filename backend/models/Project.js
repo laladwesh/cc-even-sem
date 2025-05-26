@@ -17,7 +17,7 @@ const projectSchema = new mongoose.Schema({
   },
 
   assignedTo: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: [mongoose.Schema.Types.ObjectId],
     ref: 'User',
     default: null,
   },
