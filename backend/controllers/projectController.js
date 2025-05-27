@@ -1,6 +1,7 @@
 const Project = require('../models/Project');
 const User = require('../models/User');
 const Badge = require('../models/Badge');
+const { awardBadge } = require('./stripeController');
 
 
 
@@ -236,4 +237,37 @@ exports.editProjectAdmin = async (req, res) => {
     }
     res.status(500).json({ message: 'Error updating project', error: err.message });
   }
+};
+
+
+// controllers/projectController.js
+exports.completeProject = async (req, res) => {
+  const clerkuserId = req.auth.userId;
+  const user = await User.findOne({ clerkId: clerkuserId });
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+  const userId = user._id;
+  const projectId = req.params.id;
+
+  // 1) mark the project itself complete
+  const project = await Project.findById(projectId);
+  if (!project) {
+    return res.status(404).json({ message: 'Project not found' });
+  }
+  if (project.status !== 'Completed') {
+    return res.status(400).json({ message: 'Project is not completed , Hence Certificate Cannot Be Claimed' });
+  }
+
+  // 2) update the user’s assignedProjects entry
+  await User.updateOne(
+    { _id: userId, 'assignedProjects.projectId': project._id },
+    { $set: { 'assignedProjects.$.progress': 100 } }
+  );
+
+  // 3) award the “project-completion” badge
+  await awardBadge(userId, 'project-completion');
+
+  // 4) respond with the updated project
+  res.json({ success: true, project });
 };
