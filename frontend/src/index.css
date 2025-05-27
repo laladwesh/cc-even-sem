@@ -51,6 +51,16 @@ body::-webkit-scrollbar {
 .cl-internal-w4f4gh{
   display: none;
 }
+
+/* hide-scrollbar.css */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;             /* Safari and Chrome */
+}
+
 /* .cl-internal-1p733cp{
   
 } */
