@@ -167,3 +167,40 @@ exports.getAnalytics = async (req, res) => {
     });
   }
 };
+
+
+// controllers/adminController.js
+const Badge = require('../models/Badge');
+
+
+exports.getBadgeAllocations = async (req, res) => {
+  try {
+    // 1️⃣ load all badges
+    const allBadges = await Badge.find().lean();
+
+    // 2️⃣ count awards per badge:
+    const rawCounts = await User.aggregate([
+      { $unwind: '$badges' },
+      { $group: { _id: '$badges', count: { $sum: 1 } } }
+    ]);
+
+    // 3️⃣ merge into one array
+    const badgeMap = rawCounts.reduce((m, r) => {
+      m[r._id.toString()] = r.count;
+      return m;
+    }, {});
+
+    const allocations = allBadges.map(b => ({
+      id:          b._id.toString(),
+      name:        b.name,
+      description: b.description,
+      tokenValue:  b.tokenValue,
+      count:       badgeMap[b._id.toString()] || 0
+    }));
+
+    res.json({ badges: allocations });
+  } catch (err) {
+    console.error('getBadgeAllocations error:', err);
+    res.status(500).json({ message: 'Error fetching badge data', error: err.message });
+  }
+};
