@@ -5,6 +5,7 @@ const cloudinary = require("../utils/cloudinary");
 
 
 const streamifier = require('streamifier');
+const { awardBadge } = require("./stripeController");
 
 // ── 1) Upload a chapter resource to Cloudinary ───────────────────────────
 const uploadResource = async (req, res) => {
@@ -328,6 +329,25 @@ const editCourseAdmin = async (req, res) => {
   }
 };
 
+const completeCourse = async (req, res) => {
+  const userId   = req.auth.userId;
+  const user = await User.findOne({ clerkId: userId });
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  const courseId = req.params.id;
+
+  // mark in the User.enrolledCourses
+  await User.updateOne(
+    { _id: user._id, 'enrolledCourses.courseId': courseId },
+    { $set: { 'enrolledCourses.$.progress': 100, 'enrolledCourses.$.completedSections': [] } }
+  );
+
+  // award badge
+  await awardBadge(userId, 'course-completion');
+
+  res.json({ success: true });
+};
 
 
 
@@ -345,5 +365,6 @@ module.exports = {
   toggleSection,
   uploadResource,
   getAllCoursesAdmin,
-  editCourseAdmin
+  editCourseAdmin,
+  completeCourse
 };
