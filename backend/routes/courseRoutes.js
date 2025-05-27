@@ -18,6 +18,12 @@ const { ensureAdmin } = require("../middleware/auth");
 
 router.get('/admin', ClerkExpressRequireAuth(), ensureAdmin , courseController.getAllCoursesAdmin);
 router.patch('/:id', ClerkExpressRequireAuth(), ensureAdmin ,  courseController.editCourseAdmin);
+router.patch(
+  '/:id/complete',
+  ClerkExpressRequireAuth(),
+  courseController.completeCourse
+);
+
 router.get("/", ClerkExpressRequireAuth(), courseController.getAllCourses);
 router.post(
   "/:id/enroll",
