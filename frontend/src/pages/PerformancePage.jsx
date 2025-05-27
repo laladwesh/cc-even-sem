@@ -14,7 +14,7 @@ import {
   notifications,
   highlights,
   rewardInfo,
-} from "./performanceData";
+} from "../utils/performanceData";
 
 const iconMap = {
   Trophy,
