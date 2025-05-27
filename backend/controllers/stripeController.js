@@ -61,3 +61,63 @@
 //     res.status(400).send(`Webhook Error: ${err.message}`);
 //   }
 // };
+
+
+// controllers/performance.js
+
+const User  = require('../models/User');
+const Badge = require('../models/Badge');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+async function awardBadge(userId, badgeSlug) {
+  // lookup or create the badge type
+  let badge = await Badge.findOne({ slug: badgeSlug });
+  if (!badge) {
+    badge = await Badge.create({
+      slug: badgeSlug,
+      name: badgeSlug.replace(/[-_]/g,' '),
+      tokenValue: 500,        // e.g. $5.00 bonus
+    });
+  }
+
+  // add to user if not already awarded
+  const user = await User.findById(userId);
+  if (!user.badges.includes(badge._id)) {
+    user.badges.push(badge._id);
+    user.tokenBalance += badge.tokenValue;
+    await user.save();
+  }
+}
+
+
+exports.cashOut = async (req, res) => {
+  const user = await User.findOne({clerkId : req.auth.userId});
+  if (!user.stripeAccountId) {
+    return res.status(400).json({ message: 'No Stripe account connected' });
+  }
+  const amount = user.tokenBalance;            // e.g. 500 = $5.00
+  if (amount <= 0) {
+    return res.status(400).json({ message: 'Nothing to pay out' });
+  }
+
+  // create a Transfer to their connected account
+  await stripe.transfers.create({
+    amount,
+    currency: 'usd',
+    destination: user.stripeAccountId,
+  });
+
+  // zero them out
+  user.tokenBalance = 0;
+  await user.save();
+
+  res.json({ success: true, paid: amount });
+};
+
+
+
+
+
+module.exports = {
+    awardBadge
+}
