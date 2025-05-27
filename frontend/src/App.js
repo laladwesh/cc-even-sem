@@ -9,6 +9,10 @@ import DashboardPage from "./pages/DashboardPage";
 import CoursePage from "./pages/CoursePage";
 import ProjectPage from "./pages/ProjectPage";
 import PerformancePage from "./pages/PerformancePage";
+import ProtectedRoute from "./utils/ProtectedRoute";
+import AdminPanel from "./pages/AdminPanel";
+import AdminRoute from "./utils/AdminRoute";
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   const blogRef = useRef(null);
@@ -26,17 +30,61 @@ function App() {
         onBlogClick={() => scrollTo(blogRef)}
         onReviewsClick={() => scrollTo(reviewsRef)}
       />
+    <Toaster position="top-right" />
       <Routes>
         <Route
           path="/"
           element={<HomePage blogRef={blogRef} reviewsRef={reviewsRef} />}
         />
-        <Route path="/about" element={<AboutPage />} />
+        <Route
+          path="/about"
+          element={
+              <AboutPage />
+          }
+        />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/course/:id" element={<CoursePage />} />
-        <Route path="/project" element={<ProjectPage />} />
-        <Route path="/performance" element={<PerformancePage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/course/:id"
+          element={
+            <ProtectedRoute>
+              <CoursePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/project"
+          element={
+            <ProtectedRoute>
+              <ProjectPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/performance"
+          element={
+            <ProtectedRoute>
+              <PerformancePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+            <ProtectedRoute>
+              <AdminPanel />
+            </ProtectedRoute>
+            </AdminRoute>
+          }
+        />
       </Routes>
       <Footer />
     </BrowserRouter>
