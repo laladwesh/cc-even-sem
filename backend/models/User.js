@@ -89,6 +89,14 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+// in models/User.js
+userSchema.add({
+  badges: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Badge' }],
+  tokenBalance: { type: Number, default: 0 },    // earned but not yet paid
+  stripeAccountId: { type: String },             // your Connected Account ID
+});
+
+
 // 🔐 Hash password before saving
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
