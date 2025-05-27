@@ -1,248 +1,149 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-const allCourses = {
-  
-  "My Courses": [
-    {
-      title: "Advanced React Patterns",
-      image: "https://picsum.photos/id/3/5000/3333",
-      status: "In Progress",
-      progress: 85,
-    },
-    {
-      title: "Leadership Skills for Managers",
-      image: "https://picsum.photos/id/5/5000/3333",
-      status: "In Progress",
-      progress: 80,
-    },
-    {
-      title: "Cloud Computing Basics",
-      image: "https://picsum.photos/id/12/5000/3333",
-      status: "In Progress",
-      progress: 95,
-    },
-    {
-      title: "UI/UX Design Principles",
-      image: "https://picsum.photos/id/11/5000/3333",
-      status: "In Progress",
-      progress: 70,
-    },
-    {
-      title: "Advanced SQL Techniques",
-      image: "https://picsum.photos/id/6/5000/3333",
-      status: "In Progress",
-      progress: 55,
-    },
-    {
-      title: "Data Analysis with Python",
-      image: "https://picsum.photos/id/6/5000/3333",
-      status: "Completed",
-      progress: 100,
-    },
-    {
-      title: "Cybersecurity Fundamentals",
-      image: "https://picsum.photos/id/13/5000/3333",
-      status: "Not Started",
-      progress: 30,
-    },
-    {
-      title: "Machine Learning Introduction",
-      image: "https://picsum.photos/id/8/5000/3333",
-      status: "Not Started",
-      progress: 15,
-    },
-    {
-      title: "Effective Project Management",
-      image: "https://picsum.photos/id/4/5000/3333",
-      status: "Completed",
-      progress: 100,
-    },
-    {
-      title: "Financial Literacy for Employees",
-      image: "https://picsum.photos/id/7/5000/3333",
-      status: "Completed",
-      progress: 100,
-    },
-  ],
-  "Available Courses": [
-    {
-      title: "Cybersecurity Fundamentals",
-      image: "https://picsum.photos/id/13/5000/3333",
-      status: "Not Started",
-      progress: 30,
-    },
-    {
-      title: "Machine Learning Introduction",
-      image: "https://picsum.photos/id/8/5000/3333",
-      status: "Not Started",
-      progress: 15,
-    },
-    {
-      title: "Financial Literacy for Employees",
-      image: "https://picsum.photos/id/7/5000/3333",
-      status: "Completed",
-      progress: 100,
-    },
-    {
-      title: "UI/UX Design Principles",
-      image: "https://picsum.photos/id/11/5000/3333",
-      status: "In Progress",
-      progress: 70,
-    },
-    {
-      title: "Advanced SQL Techniques",
-      image: "https://picsum.photos/id/6/5000/3333",
-      status: "In Progress",
-      progress: 55,
-    },
-    {
-      title: "Cloud Computing Basics",
-      image: "https://picsum.photos/id/12/5000/3333",
-      status: "In Progress",
-      progress: 95,
-    },
-    {
-      title: "Leadership Skills for Managers",
-      image: "https://picsum.photos/id/5/5000/3333",
-      status: "In Progress",
-      progress: 80,
-    },
-    {
-      title: "Effective Project Management",
-      image: "https://picsum.photos/id/4/5000/3333",
-      status: "Completed",
-      progress: 100,
-    },
-    {
-      title: "Data Analysis with Python",
-      image: "https://picsum.photos/id/6/5000/3333",
-      status: "Completed",
-      progress: 100,
-    },
-    {
-      title: "Advanced React Patterns",
-      image: "https://picsum.photos/id/3/5000/3333",
-      status: "In Progress",
-      progress: 85,
-    },
-    {
-      title: "Business Communication Essentials",
-      image: "https://picsum.photos/id/9/5000/3333",
-      status: "Not Started",
-      progress: 0,
-    },
-    {
-      title: "Ethical Hacking Basics",
-      image: "https://picsum.photos/id/10/5000/3333",
-      status: "Not Started",
-      progress: 10,
-    },
-  ],
-  "Favorite Courses": [
-    {
-      title: "Data Analysis with Python",
-      image: "https://picsum.photos/id/6/5000/3333",
-      status: "Completed",
-      progress: 100,
-    },
-    {
-      title: "Cloud Computing Basics",
-      image: "https://picsum.photos/id/12/5000/3333",
-      status: "In Progress",
-      progress: 95,
-    },
-    {
-      title: "Effective Project Management",
-      image: "https://picsum.photos/id/4/5000/3333",
-      status: "Completed",
-      progress: 100,
-    },
-    {
-      title: "Advanced SQL Techniques",
-      image: "https://picsum.photos/id/6/5000/3333",
-      status: "In Progress",
-      progress: 55,
-    },
-    {
-      title: "Machine Learning Introduction",
-      image: "https://picsum.photos/id/8/5000/3333",
-      status: "Not Started",
-      progress: 15,
-    },
-    {
-      title: "Leadership Skills for Managers",
-      image: "https://picsum.photos/id/5/5000/3333",
-      status: "In Progress",
-      progress: 80,
-    },
-    {
-      title: "Cybersecurity Fundamentals",
-      image: "https://picsum.photos/id/13/5000/3333",
-      status: "Not Started",
-      progress: 30,
-    },
-    {
-      title: "Financial Literacy for Employees",
-      image: "https://picsum.photos/id/7/5000/3333",
-      status: "Completed",
-      progress: 100,
-    },
-    {
-      title: "UI/UX Design Principles",
-      image: "https://picsum.photos/id/11/5000/3333",
-      status: "In Progress",
-      progress: 70,
-    },
-    {
-      title: "Team Collaboration Tools",
-      image: "https://picsum.photos/id/15/5000/3333",
-      status: "In Progress",
-      progress: 40,
-    },
-  ],
-};
-
-
-const getStatusColor = (status) => {
-  switch (status) {
-    case "Completed":
-      return "bg-green-500";
-    case "In Progress":
-      return "bg-blue-500";
-    case "Not Started":
-      return "bg-gray-400";
-    default:
-      return "bg-gray-300";
-  }
-};
+import { useAuth, useUser } from "@clerk/clerk-react";
+import axios from "axios";
 
 const DashboardPage = () => {
-      const [activeTab, setActiveTab] = useState("My Courses");
-      const navigate = useNavigate();
+  const [courses, setCourses] = useState([]);
+  const [userData, setUserData] = useState(null);
+  const [activeTab, setActiveTab] = useState("Available Courses");
+
+  const navigate = useNavigate();
+  const { getToken } = useAuth();
+  const { user } = useUser();
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Completed":
+        return "bg-green-500";
+      case "In Progress":
+        return "bg-blue-500";
+      case "Not Started":
+        return "bg-gray-400";
+      default:
+        return "bg-gray-300";
+    }
+  };
+
+  useEffect(() => {
+    const syncUser = async () => {
+      try {
+        const token = await getToken();
+        console.log(token);
+        await axios.post(
+         `${process.env.REACT_APP_BACKEND_URL}/api/auth/sync`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } catch (err) {
+        console.error("Failed to sync Clerk user:", err);
+      }
+    };
+
+    if (user) {
+      syncUser();
+    }
+  }, [user, getToken]);
+
+  // 1️⃣ load all courses + user's enroll/fav lists
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const token = await getToken();
+        const { data } = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/courses`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setCourses(data.courses);
+        setUserData(data.user);
+      } catch (err) {
+        console.error("Error loading dashboard data", err);
+      }
+    };
+    if (user) load();
+  }, [user, getToken]);
+
+  if (!userData) return <p>Loading…</p>;
+
+  const enrolledIds = new Set(
+    userData.enrolledCourses.map((c) => String(c.courseId ?? c._id))
+  );
+  const favIds = new Set(
+    userData.favouriteCourses.map((c) => String(c.courseId))
+  );
+
+  const myCourses = courses.filter((c) => enrolledIds.has(c._id));
+  const favCourses = courses.filter((c) => favIds.has(c._id));
+  const availableCourses = courses;
+
+  const tabs = {
+    "My Courses": myCourses,
+    "Favorite Courses": favCourses,
+    "Available Courses": availableCourses,
+  };
+
+  // 4️⃣ favorite toggle (POST ↔ DELETE)
+  const handleToggleFav = async (courseId) => {
+    const isFav = favIds.has(courseId);
+    try {
+      const token = await getToken();
+      if (!isFav) {
+        await axios.post(
+         `${process.env.REACT_APP_BACKEND_URL}/api/courses/${courseId}/enroll/fav`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setUserData((d) => ({
+          ...d,
+          favouriteCourses: [...d.favouriteCourses, { courseId }],
+        }));
+      } else {
+        await axios.delete(
+          `${process.env.REACT_APP_BACKEND_URL}/api/courses/${courseId}/rm/fav`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setUserData((d) => ({
+          ...d,
+          favouriteCourses: d.favouriteCourses.filter(
+            (fc) => String(fc.courseId) !== courseId
+          ),
+        }));
+      }
+    } catch (err) {
+      console.error("Favourite toggle failed", err);
+    }
+  };
+
+  // ➕ enroll handler
+  const handleEnroll = async (courseId) => {
+    try {
+      const token = await getToken();
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/courses/${courseId}/enroll`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setUserData((d) => ({
+        ...d,
+        enrolledCourses: [...d.enrolledCourses, { courseId }],
+      }));
+    } catch (err) {
+      console.error("Enroll failed", err);
+    }
+  };
+
   return (
     <div className="bg-[#e7d9f9] w-full px-6 md:px-36 py-24">
       <h2 className="text-xl font-semibold mb-4">Training Dashboard</h2>
 
-      {/* Stats Bar */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        {[
-          { title: "Courses Completed", count: 18 },
-          { title: "Active Courses", count: 8 },
-          { title: "Certificates Earned", count: 5 },
-          { title: "Upcoming Deadlines", count: 2 },
-        ].map((stat, idx) => (
-          <div key={idx} className="bg-[#ABAEF2] p-4 rounded-lg text-center">
-            <p className="text-sm text-gray-700">{stat.title}</p>
-            <p className="text-2xl font-bold">{stat.count}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Tabs (just visuals for now) */}
-   <div className="flex mb-6 space-x-4">
-        {Object.keys(allCourses).map((tab, idx) => (
+      {/* Tabs */}
+      <div className="flex mb-6 space-x-4">
+        {Object.keys(tabs).map((tab) => (
           <button
-            key={idx}
+            key={tab}
             className={`px-4 py-2 rounded-md font-medium ${
               activeTab === tab ? "bg-white shadow" : "bg-purple-100"
             }`}
@@ -253,11 +154,18 @@ const DashboardPage = () => {
         ))}
       </div>
 
-      {/* Courses */}
+      {/* Courses Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {allCourses[activeTab].map((course, idx) => (
-          <div key={idx} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
-            <img src={course.image} alt={course.title} className="h-40 w-full object-cover" />
+        {tabs[activeTab].map((course) => (
+          <div
+            key={course._id}
+            className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
+          >
+            <img
+              src={course.thumbnail || course.image}
+              alt={course.title}
+              className="h-40 w-full object-cover"
+            />
             <div className="p-4 flex-1 flex flex-col">
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-sm font-semibold">{course.title}</h3>
@@ -269,15 +177,62 @@ const DashboardPage = () => {
                   {course.status}
                 </span>
               </div>
+
               <div className="h-2 w-full bg-gray-200 rounded-full mb-2">
                 <div
-                  className={`h-full rounded-full ${getStatusColor(course.status)}`}
+                  className="h-full rounded-full"
                   style={{ width: `${course.progress}%` }}
-                ></div>
+                />
               </div>
+
               <div className="flex justify-between items-center mt-auto">
-                <button onClick={() => navigate(`/course/${course.progress}`)} className="text-sm text-purple-600 hover:underline">View Course</button>
-                <button className="text-red-500 hover:text-red-600 text-lg">☆</button>
+                <button
+                  onClick={() => navigate(`/course/${course._id}`)}
+                  className="text-sm text-purple-600 hover:underline"
+                >
+                  View Course
+                </button>
+
+                {activeTab === "Available Courses" ||
+                activeTab === "Favorite Courses" ? (
+                  <div className="flex items-center space-x-4">
+                    {/* Enroll / Enrolled */}
+                    {!enrolledIds.has(course._id) ? (
+                      <button
+                        onClick={() => handleEnroll(course._id)}
+                        className="text-green-600 hover:text-green-800 font-medium"
+                      >
+                        Enroll
+                      </button>
+                    ) : (
+                      <span className="text-gray-500 italic text-sm">
+                        Enrolled
+                      </span>
+                    )}
+                    {/* Favorite toggle always here */}
+                    <button
+                      onClick={() => handleToggleFav(course._id)}
+                      className={`text-lg ${
+                        favIds.has(course._id)
+                          ? "text-red-500"
+                          : "text-gray-400 hover:text-red-600"
+                      }`}
+                    >
+                      {favIds.has(course._id) ? "★" : "☆"}
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleToggleFav(course._id)}
+                    className={`text-lg ${
+                      favIds.has(course._id)
+                        ? "text-red-500"
+                        : "text-gray-400 hover:text-red-600"
+                    }`}
+                  >
+                    {favIds.has(course._id) ? "★" : "☆"}
+                  </button>
+                )}
               </div>
             </div>
           </div>
