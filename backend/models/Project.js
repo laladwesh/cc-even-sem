@@ -11,10 +11,10 @@ const resourceSchema = new mongoose.Schema({
     required: true
   },
   topics: {
-    type: [String],    // duration in minutes
+    type: [String],  
     required: true
   }
-}, { _id: false });  // no separate ObjectId for each section
+}, { _id: false }); 
 const projectSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -23,7 +23,7 @@ const projectSchema = new mongoose.Schema({
   description: {
     type: String,
   },
-  requiredSkills: [String], // Used for matching with user profiles
+  requiredSkills: [String],
 
   status: {
     type: String,
@@ -39,7 +39,7 @@ const projectSchema = new mongoose.Schema({
 
   progress: {
     type: Number,
-    default: 0, // Admin-level or system-wide progress
+    default: 0, 
   },
   resources : [resourceSchema],
   badge: {
@@ -49,7 +49,7 @@ const projectSchema = new mongoose.Schema({
 
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Admin or Manager
+    ref: 'User',
   },
 
   deadline: {
