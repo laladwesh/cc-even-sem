@@ -3,12 +3,13 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import toast from 'react-hot-toast';
+
 const CoursePage = () => {
   const [course, setCourse] = useState(null);
   const [chapters, setChapters] = useState([]);
   const [checkedChapters, setCheckedChapters] = useState([]);
   const [isEnrolled, setIsEnrolled] = useState(false);
-  const [progress, setProgress] = useState(0); // only declaration of progress
+  const [progress, setProgress] = useState(0);
 
   // modal state
   const [showEnrollModal, setShowEnrollModal] = useState(false);
@@ -16,7 +17,6 @@ const CoursePage = () => {
 
   const { id } = useParams();
   const { getToken } = useAuth();
-  // const navigate = useNavigate();
 
   // fetch course + user’s completedSections & progress
   useEffect(() => {
@@ -28,7 +28,6 @@ const CoursePage = () => {
           `${process.env.REACT_APP_BACKEND_URL}/api/courses/${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        console.log("Course data:", data);
         const cd = data.course;
         setCourse(cd);
         setChapters(cd.sections || []);
@@ -42,25 +41,21 @@ const CoursePage = () => {
     fetchCourse();
   }, [id, getToken]);
 
-// handle course completion
-const handleComplete = async () => {
+  // handle course completion
+  const handleComplete = async () => {
     try {
       const token = await getToken();
       await axios.patch(
-       `${process.env.REACT_APP_BACKEND_URL}/api/courses/${course._id}/complete`,
-        {}, // no body needed
+        `${process.env.REACT_APP_BACKEND_URL}/api/courses/${course._id}/complete`,
+        {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success('Course marked complete! Badge awarded 🎉');
-      // you can also refresh local state here…
     } catch (err) {
       console.error(err);
       toast.error('Failed to complete course');
     }
   };
-
-
-
 
   // enroll API call
   const handleEnroll = async () => {
@@ -115,33 +110,38 @@ const handleComplete = async () => {
     setPendingChapterIdx(null);
   };
 
-  if (!course) return <p>Loading course…</p>;
+  if (!course) return <p className="p-4 text-center">Loading course…</p>;
 
   return (
-    <div className="bg-background rounded-lg px-11 py-4 mt-20 max-w-full">
-      <h3 className="text-4xl font-semibold py-5 mb-3 text-gray-800">
+    <div className="bg-background rounded-lg px-4 sm:px-8 lg:px-11 py-4 mt-8 sm:mt-12 md:mt-16 max-w-full mx-auto">
+      {/* Course Title */}
+      <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold py-4 sm:py-5 mb-3 text-gray-800 text-left">
         {course.title}
       </h3>
-      <div className="flex justify-center mb-6">
+
+      {/* Thumbnail Image */}
+      <div className="flex justify-center mb-6 px-4 sm:px-8 md:px-12">
         <img
           src={course.thumbnail}
           alt={course.title}
-          className="w-full px-12 max-h-[65vh] rounded-lg object-cover"
+          className="w-full max-h-[50vh] sm:max-h-[60vh] md:max-h-[65vh] rounded-lg object-cover"
         />
       </div>
-      <div className="px-11">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center mb-4">
-            <h4 className="text-3xl text-primary font-semibold flex-1">
+
+      {/* Course Overview */}
+      <div className="px-4 sm:px-8 md:px-11 mb-6">
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 md:p-8">
+          <div className="flex flex-col md:flex-row items-start md:items-center mb-4">
+            <h4 className="text-xl sm:text-2xl md:text-3xl text-primary font-semibold flex-1 mb-2 md:mb-0">
               Course Overview
             </h4>
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap space-x-2">
               {/* Category Pill */}
-              <span className="text-sm bg-primary text-white px-3 py-1 rounded-full">
+              <span className="text-xs sm:text-sm bg-primary text-white px-2 sm:px-3 py-1 rounded-full">
                 {course.category}
               </span>
               {/* Duration Pill */}
-              <span className="flex items-center text-sm bg-purple-100 text-purple-700 px-3 py-1 rounded-full">
+              <span className="flex items-center text-xs sm:text-sm bg-purple-100 text-purple-700 px-2 sm:px-3 py-1 rounded-full">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="w-4 h-4"
@@ -157,14 +157,14 @@ const handleComplete = async () => {
                   />
                 </svg>
                 <span className="ml-1">
-                  {Math.floor(course.duration)}h{" "}
+                  {Math.floor(course.duration)}h&nbsp;
                   {Math.round((course.duration % 1) * 60)}m
                 </span>
               </span>
             </div>
           </div>
 
-          <p className="text-gray-700 leading-relaxed mb-6">
+          <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed mb-4 sm:mb-6">
             {course.description}
           </p>
 
@@ -173,7 +173,7 @@ const handleComplete = async () => {
               {course.skillTags.map((tag, idx) => (
                 <span
                   key={idx}
-                  className="inline-flex items-center bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-medium"
+                  className="inline-flex items-center bg-purple-100 text-purple-700 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium"
                 >
                   {tag}
                 </span>
@@ -183,31 +183,32 @@ const handleComplete = async () => {
         </div>
       </div>
 
-      <div className="bg-background min-h-screen p-6 flex justify-center">
-        <div className="p-6 rounded-lg w-full max-w-8xl flex gap-6">
+      {/* Chapters & Progress */}
+      <div className="bg-background py-6 px-4 sm:px-6 lg:px-8">
+        <div className="p-4 sm:p-6 md:p-8 rounded-lg w-full max-w-8xl mx-auto flex flex-col-reverse md:flex-row gap-6">
           {/* Left: Chapter List */}
-          <div className="flex-1 bg-white h-auto">
+          <div className="flex-1 bg-white rounded-lg shadow-sm p-4 sm:p-6">
             {chapters.map((chapter, idx) => (
               <div
                 key={idx}
-                className="flex items-center justify-between mb-4 border rounded-lg p-4 hover:shadow-sm transition"
+                className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 border rounded-lg p-3 sm:p-4 hover:shadow-sm transition"
               >
                 {/* Left: checkbox + title */}
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 sm:space-x-3 mb-2 sm:mb-0">
                   <input
                     type="checkbox"
                     checked={checkedChapters.includes(idx)}
                     onChange={() => onCheckboxClick(idx)}
-                    className="h-5 w-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                    className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
                   />
-                  <span className="text-gray-800 font-medium">
+                  <span className="text-gray-800 font-medium text-sm sm:text-base">
                     {chapter.title}
                   </span>
                 </div>
 
                 {/* Right: duration + resources button */}
-                <div className="flex items-center space-x-3">
-                  <span className="text-sm text-gray-500">
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <span className="text-xs sm:text-sm text-gray-500">
                     {chapter.duration} min
                   </span>
                   {isEnrolled && (
@@ -225,7 +226,7 @@ const handleComplete = async () => {
             ))}
 
             <button
-              className="mt-6 mb-8 flex justify-center px-2 mx-auto bg-primary text-white py-2 rounded hover:bg-purple-700"
+              className="mt-4 sm:mt-6 mb-4 sm:mb-8 w-full sm:w-auto flex justify-center px-2 sm:px-4 bg-primary text-white py-2 sm:py-3 rounded hover:bg-purple-700 transition disabled:opacity-50"
               onClick={handleComplete}
               disabled={checkedChapters.length < chapters.length}
             >
@@ -234,9 +235,11 @@ const handleComplete = async () => {
           </div>
 
           {/* Right: Progress Circle */}
-          <div className="w-1/3 flex flex-col py-8 items-center">
-            <h4 className="font-semibold mb-4">Progress Report</h4>
-            <svg className="w-40 h-40">
+          <div className="w-full md:w-1/3 flex flex-col py-4 sm:py-8 items-center bg-white rounded-lg shadow-sm">
+            <h4 className="text-base sm:text-lg font-semibold mb-4">
+              Progress Report
+            </h4>
+            <svg viewBox="0 0 160 160" className="w-32 h-32 sm:w-40 sm:h-40">
               <circle
                 cx="80"
                 cy="80"
@@ -274,23 +277,25 @@ const handleComplete = async () => {
 
       {/* Enroll Confirmation Modal */}
       {showEnrollModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full">
-            <h4 className="text-lg font-semibold mb-4">Enroll Required</h4>
-            <p className="mb-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4">
+          <div className="bg-white rounded-lg p-6 max-w-xs sm:max-w-sm w-full">
+            <h4 className="text-base sm:text-lg font-semibold mb-4">
+              Enroll Required
+            </h4>
+            <p className="text-sm sm:text-base mb-6">
               You need to enroll in this course to mark chapters complete.
               Enroll now?
             </p>
             <div className="flex justify-end space-x-4">
               <button
                 onClick={onCancelEnroll}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                className="px-3 sm:px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 text-sm sm:text-base"
               >
                 Cancel
               </button>
               <button
                 onClick={onConfirmEnroll}
-                className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                className="px-3 sm:px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 text-sm sm:text-base"
               >
                 Enroll
               </button>
