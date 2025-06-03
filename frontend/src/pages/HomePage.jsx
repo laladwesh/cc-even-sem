@@ -8,7 +8,7 @@ import {
   BookOpenCheck,
   BadgeCheck,
 } from "lucide-react";
-import {  useState } from "react";
+import { useState } from "react";
 
 const blogPosts = [
   {
@@ -47,7 +47,6 @@ const blogPosts = [
     date: "September 28, 2024",
     image: "/blog6.png",
   },
-  // Add 6 more dummy articles
   {
     title: "Adapting Learning Paths with AI",
     category: "Innovation",
@@ -86,11 +85,10 @@ const blogPosts = [
   },
 ];
 
-
 export default function HeroSection({ blogRef, reviewsRef }) {
   const [expanded, setExpanded] = useState(false);
-
   const displayedPosts = expanded ? blogPosts : blogPosts.slice(0, 6);
+
   const features = [
     {
       title: "Smart Project Allocation",
@@ -115,75 +113,75 @@ export default function HeroSection({ blogRef, reviewsRef }) {
   ];
 
   return (
-    <div className="bg-[#e7d9f9] w-full px-6 md:px-36 py-24">
+    <div className="bg-[#e7d9f9] w-full px-4 sm:px-6 md:px-12 lg:px-36 py-12 sm:py-16 md:py-24">
       {/* Hero Section */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-10">
         {/* Text Content */}
-        <div className="max-w-xl">
-          <p className="text-base md:text-lg text-purple-700 font-semibold mb-3">
+        <div className="w-full md:w-1/2 max-w-xl">
+          <p className="text-base sm:text-lg text-purple-700 font-semibold mb-3">
             Employee Development & Training
           </p>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-6">
             Grow Your Workforce,
             <br />
             <span className="text-primary">Grow Your Company</span>
           </h1>
-          <p className="text-lg text-gray-800 mb-8">
+          <p className="text-base sm:text-lg text-gray-800 mb-8">
             Unlock the full potential of your employees with our integrated
             platform for project allocation, training management, and
             performance recognition.
           </p>
-          <button className="bg-primary hover:bg-primary/80 text-lg text-white px-7 py-3 rounded-md shadow-md">
+          <button className="bg-primary hover:bg-primary/80 text-lg text-white px-6 sm:px-7 py-2 sm:py-3 rounded-md shadow-md">
             Let’s get started
           </button>
         </div>
 
         {/* Image */}
-        <div className="w-full md:w-6/12">
+        <div className="w-full md:w-1/2">
           <img
             src="/hero.png"
             alt="Hero"
-            className="rounded-md shadow-lg w-full"
+            className="rounded-md shadow-lg w-full h-auto object-cover"
           />
         </div>
       </div>
 
       {/* Features */}
-      <div className="mt-20 text-center">
-        <h2 className="text-3xl font-semibold text-gray-900 mb-12">
+      <div className="mt-16 sm:mt-20 text-center">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 mb-8 sm:mb-12">
           Key Platform Features
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {features.map((feature, i) => (
             <div
               key={i}
-              className="bg-[#ABAEF2] p-7 rounded-lg shadow-md text-left hover:shadow-lg transition"
+              className="bg-[#ABAEF2] p-4 sm:p-7 rounded-lg shadow-md hover:shadow-lg transition text-left"
             >
               <div className="flex flex-col items-start">
                 <span className="w-full">{feature.icon}</span>
-                <h3 className="text-xl mx-auto font-semibold text-gray-900 mb-2">
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-base text-center text-gray-800">
-                  {feature.desc}
-                </p>
+                <p className="text-base text-gray-800">{feature.desc}</p>
               </div>
             </div>
           ))}
         </div>
       </div>
-      <div className="bg-[#fff] w-full px-11 mt-20 rounded-lg py-24 text-center">
+
+      {/* Impact Section */}
+      <div className="bg-white w-full px-4 sm:px-6 lg:px-28 mt-20 rounded-lg py-16 sm:py-20 text-center">
         {/* Section Title */}
-        <h2 className="text-3xl md:text-4xl font-semibold text-purple-700 mb-3">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-purple-700 mb-3">
           Tangible Impact on Your Business
         </h2>
-        <p className="text-base md:text-lg text-gray-700 mb-12">
+        <p className="text-base sm:text-lg text-gray-700 mb-8 sm:mb-12">
           See the measurable results of investing in your employees’ growth and
           development.
         </p>
 
         {/* Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
           {[
             {
               icon: <Users className="h-8 w-8 text-primary mb-2" />,
@@ -203,13 +201,15 @@ export default function HeroSection({ blogRef, reviewsRef }) {
           ].map((metric, i) => (
             <div
               key={i}
-              className="bg-white border border-secondary p-6 rounded-lg text-center hover:shadow-md transition"
+              className="bg-white border border-secondary p-4 sm:p-6 rounded-lg text-center hover:shadow-md transition"
             >
               <div className="flex justify-center">{metric.icon}</div>
-              <h3 className="text-2xl font-bold text-primary">
+              <h3 className="text-xl sm:text-2xl font-bold text-primary">
                 {metric.value}
               </h3>
-              <p className="text-sm text-gray-700 mt-1">{metric.label}</p>
+              <p className="text-sm sm:text-base text-gray-700 mt-1">
+                {metric.label}
+              </p>
             </div>
           ))}
         </div>
@@ -219,16 +219,17 @@ export default function HeroSection({ blogRef, reviewsRef }) {
           <img
             src="/impact.png"
             alt="Impact"
-            className="rounded-lg w-full max-h-[400px] object-cover"
+            className="rounded-lg w-full max-h-[300px] sm:max-h-[350px] md:max-h-[400px] object-cover"
           />
         </div>
       </div>
-      <div className="bg-[#c9bff0] w-full px-6 py-24">
-        {/* How it works */}
-        <h2 className="text-3xl md:text-4xl font-semibold text-center text-gray-900 mb-12">
+
+      {/* How It Works */}
+      <div className="bg-[#c9bff0] w-full px-4 sm:px-6 md:px-12 lg:px-28 py-16 sm:py-20">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-center text-gray-900 mb-8 sm:mb-12">
           How CompanyGrow Works
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-center mb-12 sm:mb-16">
           {[
             {
               icon: <Gift className="h-8 w-8 text-primary mx-auto mb-2" />,
@@ -253,22 +254,22 @@ export default function HeroSection({ blogRef, reviewsRef }) {
             <div
               key={i}
               ref={reviewsRef}
-              className="bg-white p-6 rounded-lg shadow hover:shadow-md transition"
+              className="bg-white p-4 sm:p-6 rounded-lg shadow hover:shadow-md transition"
             >
               {step.icon}
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 {step.title}
               </h3>
-              <p className="text-sm text-gray-700">{step.desc}</p>
+              <p className="text-sm sm:text-base text-gray-700">{step.desc}</p>
             </div>
           ))}
         </div>
 
         {/* Testimonials */}
-        <h3  className="text-3xl md:text-4xl font-semibold text-center text-primary mb-12 ">
+        <h3 className="text-2xl sm:text-3xl text-primary font-semibold text-center mb-8 sm:mb-12">
           What Our Users Say
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {[
             {
               quote:
@@ -301,79 +302,105 @@ export default function HeroSection({ blogRef, reviewsRef }) {
           ].map((user, i) => (
             <div
               key={i}
-              className="flex h-full bg-white p-6 rounded-xl shadow-md gap-5 items-start"
+              className="flex flex-col md:flex-row bg-white p-4 sm:p-6 rounded-xl shadow-md gap-4 md:gap-6"
             >
               <img
                 src={user.img}
                 alt={user.name}
-                className="w-60 h-60 object-cover"
+                className="w-full md:w-40 h-auto md:h-40 object-cover rounded"
               />
               <div className="flex flex-col justify-between h-full">
-                <p className="text-xl italic text-gray-700 mb-2">
+                <p className="text-base sm:text-lg italic text-gray-700 mb-2">
                   "{user.quote}"
                 </p>
                 <div className="mt-auto">
-                  <p className="font-semibold text-2xl text-gray-900">
+                  <p className="font-semibold text-lg sm:text-xl text-gray-900">
                     {user.name}
                   </p>
-                  <p className="text-lg text-gray-600">{user.role}</p>
+                  <p className="text-sm sm:text-base text-gray-600">
+                    {user.role}
+                  </p>
                 </div>
               </div>
             </div>
           ))}
         </div>
       </div>
-      <div ref={blogRef} className="bg-[#d7ccf2] py-20 px-4 text-center">
-      <h2 className="text-4xl font-semibold mb-10 text-gray-800">Latest from Our Blog</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-        {displayedPosts.map((post, index) => (
-          <div key={index} className="bg-white rounded-xl shadow-md overflow-hidden">
-            <img src={post.image} alt={post.title} className="h-56 w-full object-cover" />
-            <div className="p-4 text-left">
-              <span className="text-lg font-semibold text-primary">{post.category}</span>
-              <h3 className="text-base font-semibold text-gray-800 mt-1">{post.title}</h3>
-              <p className="text-lg text-gray-500 mt-1">{post.date}</p>
+
+      {/* Blog Section */}
+      <div
+        ref={blogRef}
+        className="bg-[#d7ccf2] py-16 sm:py-20 px-4 sm:px-6 md:px-12 lg:px-36 text-center"
+      >
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-8">
+          Latest from Our Blog
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {displayedPosts.map((post, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-xl shadow-md overflow-hidden"
+            >
+              <img
+                src={post.image}
+                alt={post.title}
+                className="h-48 sm:h-56 md:h-64 w-full object-cover"
+              />
+              <div className="p-4 text-left">
+                <span className="text-base sm:text-lg font-semibold text-primary">
+                  {post.category}
+                </span>
+                <h3 className="text-sm sm:text-base font-semibold text-gray-800 mt-1">
+                  {post.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                  {post.date}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="mt-8 px-5 sm:px-6 py-2 sm:py-3 rounded-lg bg-white text-gray-700 font-semibold border hover:bg-purple-100 transition"
+        >
+          {expanded ? "Close" : "View More Articles"}
+        </button>
+      </div>
+
+      {/* Newsletter */}
+      <div className="bg-[#7F55E0] py-12 sm:py-16 mt-16 text-white px-4 sm:px-6 md:px-12 lg:px-36 rounded-md">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+          {/* Left Section */}
+          <div className="w-full md:w-1/2 text-center md:text-left">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">
+              Ready to Grow Your Team?
+            </h2>
+            <p className="text-sm sm:text-base mb-4">
+              Subscribe to our newsletter for insights on employee development.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center gap-2 justify-center md:justify-start">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="px-3 sm:px-4 py-2 rounded-md text-black w-full sm:w-auto"
+              />
+              <button className="bg-purple-900 hover:bg-purple-800 text-white px-4 sm:px-5 py-2 rounded-md font-semibold text-sm sm:text-base">
+                Subscribe
+              </button>
             </div>
           </div>
-        ))}
-      </div>
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="mt-8 px-6 py-3 rounded-lg bg-white text-gray-700 font-semibold border hover:bg-purple-100 transition"
-      >
-        {expanded ? "Close" : "View More Articles"}
-      </button>
-    </div>
-    <div className="bg-[#7F55E0] py-24 mt-20 text-white px-6 rounded-md">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
-        {/* Left Section */}
-        <div className="flex-1">
-          <h2 className="text-2xl md:text-3xl font-bold mb-2">Ready to Grow Your Team?</h2>
-          <p className="mb-4">
-            Subscribe to our newsletter for insights on employee development.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center gap-2">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="px-4 py-2 rounded-md text-black w-full sm:w-auto"
+
+          {/* Right Section - Image */}
+          <div className="w-full md:w-1/2 flex justify-center md:justify-end">
+            <img
+              src="/news.png"
+              alt="Grow arrows"
+              className="w-full max-w-md h-auto object-cover rounded"
             />
-            <button className="bg-purple-900 hover:bg-purple-800 text-white px-5 py-2 rounded-md font-semibold">
-              Subscribe
-            </button>
           </div>
         </div>
-
-        {/* Right Section - Image */}
-        <div className="flex-1">
-          <img
-            src="/news.png"
-            alt="Grow arrows"
-            className="w-full h-full max-w-md mx-auto rounded"
-          />
-        </div>
       </div>
-    </div>
     </div>
   );
 }
