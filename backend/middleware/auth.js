@@ -14,12 +14,14 @@ const ensureSignedIn = requireAuth();
 async function ensureAdmin(req, res, next) {
   try {
     // req.auth.userId is set by requireAuth()
+    console.log("User ID from auth:", req.auth.userId);
     const user = await clerkClient.users.getUser(req.auth.userId);
-
+    console.log("Fetched user:", user);
     if (user.publicMetadata?.role !== "admin") {
       return res.status(403).json({ error: "Forbidden – admin only" });
     }
-
+    // If the user is an admin, continue to the next middleware or route handler
+    console.log("User is an admin, proceeding to next middleware");
     // you could also attach the full user object to req if you like:
     // req.user = user;
     next();
