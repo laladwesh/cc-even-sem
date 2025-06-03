@@ -23,7 +23,6 @@ export default function AdminPanel() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // fetch lists on mount
   useEffect(() => {
     (async () => {
       setLoading(true);
