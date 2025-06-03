@@ -29,9 +29,8 @@ const DashboardPage = () => {
     const syncUser = async () => {
       try {
         const token = await getToken();
-        console.log(token);
         await axios.post(
-         `${process.env.REACT_APP_BACKEND_URL}/api/auth/sync`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/auth/sync`,
           {},
           {
             headers: {
@@ -49,14 +48,16 @@ const DashboardPage = () => {
     }
   }, [user, getToken]);
 
-  // 1️⃣ load all courses + user's enroll/fav lists
   useEffect(() => {
     const load = async () => {
       try {
         const token = await getToken();
-        const { data } = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/courses`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const { data } = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/courses`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setCourses(data.courses);
         setUserData(data.user);
       } catch (err) {
@@ -66,7 +67,10 @@ const DashboardPage = () => {
     if (user) load();
   }, [user, getToken]);
 
-  if (!userData) return <p>Loading…</p>;
+  if (!userData)
+    return (
+      <p className="p-4 text-center text-gray-600 text-base">Loading…</p>
+    );
 
   const enrolledIds = new Set(
     userData.enrolledCourses.map((c) => String(c.courseId ?? c._id))
@@ -85,14 +89,13 @@ const DashboardPage = () => {
     "Available Courses": availableCourses,
   };
 
-  // 4️⃣ favorite toggle (POST ↔ DELETE)
   const handleToggleFav = async (courseId) => {
     const isFav = favIds.has(courseId);
     try {
       const token = await getToken();
       if (!isFav) {
         await axios.post(
-         `${process.env.REACT_APP_BACKEND_URL}/api/courses/${courseId}/enroll/fav`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/courses/${courseId}/enroll/fav`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -117,7 +120,6 @@ const DashboardPage = () => {
     }
   };
 
-  // ➕ enroll handler
   const handleEnroll = async (courseId) => {
     try {
       const token = await getToken();
@@ -136,16 +138,20 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="bg-[#e7d9f9] w-full px-6 md:px-36 py-24">
-      <h2 className="text-xl font-semibold mb-4">Training Dashboard</h2>
+    <div className="bg-[#e7d9f9] w-full px-4 sm:px-6 lg:px-36 py-12 sm:py-16 md:py-24">
+      <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-4 text-gray-800 text-left">
+        Training Dashboard
+      </h2>
 
       {/* Tabs */}
-      <div className="flex mb-6 space-x-4">
+      <div className="flex flex-wrap justify-start mb-6 space-x-2 sm:space-x-4">
         {Object.keys(tabs).map((tab) => (
           <button
             key={tab}
-            className={`px-4 py-2 rounded-md font-medium ${
-              activeTab === tab ? "bg-white shadow" : "bg-purple-100"
+            className={`px-3 sm:px-4 py-2 rounded-md font-medium text-sm sm:text-base ${
+              activeTab === tab
+                ? "bg-white shadow"
+                : "bg-purple-100 hover:bg-purple-200"
             }`}
             onClick={() => setActiveTab(tab)}
           >
@@ -155,7 +161,7 @@ const DashboardPage = () => {
       </div>
 
       {/* Courses Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
         {tabs[activeTab].map((course) => (
           <div
             key={course._id}
@@ -164,13 +170,15 @@ const DashboardPage = () => {
             <img
               src={course.thumbnail || course.image}
               alt={course.title}
-              className="h-40 w-full object-cover"
+              className="h-40 sm:h-48 md:h-56 w-full object-cover"
             />
-            <div className="p-4 flex-1 flex flex-col">
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-sm font-semibold">{course.title}</h3>
+            <div className="p-3 sm:p-4 flex-1 flex flex-col">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
+                <h3 className="text-sm sm:text-base font-semibold text-gray-800">
+                  {course.title}
+                </h3>
                 <span
-                  className={`text-xs text-white px-2 py-1 rounded-full ${getStatusColor(
+                  className={`mt-1 sm:mt-0 text-xs sm:text-sm text-white px-2 py-1 rounded-full ${getStatusColor(
                     course.status
                   )}`}
                 >
@@ -180,39 +188,37 @@ const DashboardPage = () => {
 
               <div className="h-2 w-full bg-gray-200 rounded-full mb-2">
                 <div
-                  className="h-full rounded-full"
+                  className="h-full rounded-full bg-purple-600"
                   style={{ width: `${course.progress}%` }}
                 />
               </div>
 
-              <div className="flex justify-between items-center mt-auto">
+              <div className="mt-auto flex flex-col sm:flex-row justify-between items-start sm:items-center">
                 <button
                   onClick={() => navigate(`/course/${course._id}`)}
-                  className="text-sm text-purple-600 hover:underline"
+                  className="text-sm sm:text-base text-purple-600 hover:underline mb-2 sm:mb-0"
                 >
                   View Course
                 </button>
 
-                {activeTab === "Available Courses" ||
-                activeTab === "Favorite Courses" ? (
+                {(activeTab === "Available Courses" ||
+                  activeTab === "Favorite Courses") && (
                   <div className="flex items-center space-x-4">
-                    {/* Enroll / Enrolled */}
                     {!enrolledIds.has(course._id) ? (
                       <button
                         onClick={() => handleEnroll(course._id)}
-                        className="text-green-600 hover:text-green-800 font-medium"
+                        className="text-green-600 hover:text-green-800 text-sm sm:text-base font-medium"
                       >
                         Enroll
                       </button>
                     ) : (
-                      <span className="text-gray-500 italic text-sm">
+                      <span className="text-gray-500 italic text-xs sm:text-sm">
                         Enrolled
                       </span>
                     )}
-                    {/* Favorite toggle always here */}
                     <button
                       onClick={() => handleToggleFav(course._id)}
-                      className={`text-lg ${
+                      className={`text-lg sm:text-xl ${
                         favIds.has(course._id)
                           ? "text-red-500"
                           : "text-gray-400 hover:text-red-600"
@@ -221,10 +227,12 @@ const DashboardPage = () => {
                       {favIds.has(course._id) ? "★" : "☆"}
                     </button>
                   </div>
-                ) : (
+                )}
+
+                {activeTab === "My Courses" && (
                   <button
                     onClick={() => handleToggleFav(course._id)}
-                    className={`text-lg ${
+                    className={`ml-auto text-lg sm:text-xl ${
                       favIds.has(course._id)
                         ? "text-red-500"
                         : "text-gray-400 hover:text-red-600"
