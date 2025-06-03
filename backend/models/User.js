@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
     default: "employee",
   },
 
-  skills: [String], // e.g., ["React", "Node.js"]
+  skills: [String], 
 
   experience: {
     type: Number,
@@ -89,15 +89,13 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// in models/User.js
 userSchema.add({
   badges: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Badge' }],
-  tokenBalance: { type: Number, default: 0 },    // earned but not yet paid
-  stripeAccountId: { type: String },             // your Connected Account ID
+  tokenBalance: { type: Number, default: 0 },  
+  stripeAccountId: { type: String },        
 });
 
 
-// 🔐 Hash password before saving
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
@@ -110,5 +108,4 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 module.exports = mongoose.model("User", userSchema);
-// This schema defines the structure of a User document in MongoDB.
-// It includes fields for name, email, password, phone, role, skills, experience,
+
