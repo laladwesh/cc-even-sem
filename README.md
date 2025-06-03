@@ -23,21 +23,21 @@ Built with a React frontend (secured by Clerk) and a Node/Express backend (Mongo
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-org/companygrow.git
+git clone https://github.com/laladwesh/companygrow.git
 cd companygrow
 
 2. Create environment files
 Frontend (frontend/.env)
 
-REACT_APP_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-REACT_APP_BACKEND_URL=https://your-backend.onrender.com
+REACT_APP_CLERK_PUBLISHABLE_KEY=
+REACT_APP_BACKEND_URL=
 
 Backend (backend/.env)
 
 PORT=5000
 MONGO_URI=mongodb://localhost:27017/companygrow
 
-STRIPE_SECRET_KEY=your_stripe_secret_key
+STRIPE_SECRET_KEY=
 
 CLOUDINARY_CLOUD_NAME=…
 CLOUDINARY_API_KEY=…
