@@ -11,10 +11,10 @@ const sectionSchema = new mongoose.Schema({
     required: true
   },
   duration: {
-    type: Number,    // duration in minutes
+    type: Number,  
     required: true
   }
-}, { _id: false });  // no separate ObjectId for each section
+}, { _id: false }); 
 
 
 const courseSchema = new mongoose.Schema({
@@ -30,19 +30,19 @@ const courseSchema = new mongoose.Schema({
     type: String,
     default: 'General',
   },
-  skillTags: [String], // Used for filtering/matching with user skills
+  skillTags: [String], 
 
   mediaUrl: {
     type: String,
-    default: '', // e.g., Cloudinary link for course image or video
+    default: '',
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Usually an Admin or Manager
+    ref: 'User',
   },
 
   duration: {
-    type: Number, // in hours
+    type: Number,
     default: 1,
   },
 
@@ -50,11 +50,11 @@ const courseSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Badge',
   },
-sections: [sectionSchema], // Array of sections with title, link, and duration
+sections: [sectionSchema], 
   enrolledUsers: [
     {
       userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-      progress: { type: Number, default: 0 }, // 0 to 100%
+      progress: { type: Number, default: 0 }, 
       enrolledAt: { type: Date, default: Date.now },
     },
   ],
