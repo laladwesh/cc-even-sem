@@ -1,4 +1,3 @@
-// src/pages/AdminPanel.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
@@ -11,14 +10,12 @@ import AnalyticsDashboard from "../Components/AnalyticDashboard.jsx";
 export default function AdminPanel() {
   const { getToken } = useAuth();
 
-  // create & edit modals
   const [showCourseModal, setShowCourseModal] = useState(false);
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
   const [badges, setBadges] = useState([]);
 
-  // data lists
   const [courses, setCourses] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
