@@ -147,7 +147,7 @@ const ProjectPage = () => {
   }, [getToken]);
 
   return (
-    <div className="bg-background min-h-screen p-6 md:p-24">
+    <div className="bg-background min-h-screen p-24">
       {/* Dashboard Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
@@ -354,7 +354,7 @@ const ProjectPage = () => {
           </div> */}
         </div>
       </div>
-      <div className="bg-background p-6 rounded-xl flex flex-col md:flex-row gap-6">
+      <div className="bg-background py-6 rounded-xl flex flex-col md:flex-row gap-6">
         {/* Calendar Card */}
         <div className="bg-white p-6 rounded-xl shadow-md w-full md:w-1/2">
           <h2 className="text-3xl font-semibold mb-4">Project Timeline View</h2>
