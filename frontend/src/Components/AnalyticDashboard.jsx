@@ -39,7 +39,6 @@ export default function AnalyticsDashboard() {
 
   return (
     <div className="space-y-8 p-6">
-      {/* 1. Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div className="bg-white rounded-lg shadow p-4">
           <p className="text-gray-500">Total Employees</p>
