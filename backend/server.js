@@ -29,13 +29,9 @@ app.use(clerkMiddleware({
   secretKey: process.env.CLERK_SECRET_KEY,   // <-- your secret key
   publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
 }));
-const mongoSanitize = require('express-mongo-sanitize');
-const xss = require('xss-clean');
 const helmet = require('helmet');
 
 app.use(helmet()); // Sets secure HTTP headers
-// app.use(mongoSanitize()); // Prevents NoSQL injection
-// app.use(xss()); // Prevents XSS
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.statusCode || 500).json({
