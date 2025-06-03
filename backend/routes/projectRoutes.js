@@ -14,10 +14,4 @@ router.patch(
   ClerkExpressRequireAuth(),   // custom middleware that checks req.auth.userId or admin
   projectController.completeProject
 );
-// router.put('/:id', protect, projectController.updateProject);
-// router.delete('/:id', protect, projectController.deleteProject);
-
-// router.post('/:id/assign', protect, projectController.assignProject);
-// router.put('/:id/progress', protect, projectController.updateProgress);
-
 module.exports = router;
