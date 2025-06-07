@@ -8,8 +8,8 @@ import {
   BookOpenCheck,
   BadgeCheck,
 } from "lucide-react";
-import { useState } from "react";
-
+import { use, useState } from "react";
+import { useNavigate } from "react-router-dom";
 const blogPosts = [
   {
     title: "Top 5 Employee Training Trends in 2024",
@@ -87,6 +87,7 @@ const blogPosts = [
 
 export default function HeroSection({ blogRef, reviewsRef }) {
   const [expanded, setExpanded] = useState(false);
+  const navigate = useNavigate();
   const displayedPosts = expanded ? blogPosts : blogPosts.slice(0, 6);
 
   const features = [
@@ -131,7 +132,7 @@ export default function HeroSection({ blogRef, reviewsRef }) {
             platform for project allocation, training management, and
             performance recognition.
           </p>
-          <button className="bg-primary hover:bg-primary/80 text-lg text-white px-6 sm:px-7 py-2 sm:py-3 rounded-md shadow-md">
+          <button onClick={() => navigate('/dashboard')} className="bg-primary hover:bg-primary/80 text-lg text-white px-6 sm:px-7 py-2 sm:py-3 rounded-md shadow-md">
             Let’s get started
           </button>
         </div>
