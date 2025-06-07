@@ -28,7 +28,7 @@ const LoginPage = () => {
           alt="Team celebrating"
           className="absolute inset-0 w-full h-full object-cover opacity-80"
         />
-        <div className="relative z-10 mx-auto mb-16 px-6 sm:px-10 text-white text-2xl md:text-3xl lg:text-4xl font-semibold leading-snug">
+        <div className="relative z-10 mt-auto mx-auto mb-16 px-6 sm:px-10 text-white text-2xl md:text-3xl lg:text-4xl font-semibold leading-snug">
           Where amazing
           <br />
           things happen
