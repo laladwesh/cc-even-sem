@@ -51,37 +51,37 @@ const blogPosts = [
     title: "Adapting Learning Paths with AI",
     category: "Innovation",
     date: "September 20, 2024",
-    image: "/blog7.jpg",
+    image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df",
   },
   {
     title: "Measuring ROI of Employee Development",
     category: "Analytics",
     date: "September 12, 2024",
-    image: "/blog8.jpg",
+    image: "https://images.unsplash.com/photo-1629904853716-f0bc54eea481",
   },
   {
     title: "Remote Work & Upskilling Balance",
     category: "Remote Work",
     date: "September 1, 2024",
-    image: "/blog9.jpg",
+    image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7",
   },
   {
     title: "Training in the Age of Automation",
     category: "Future Skills",
     date: "August 20, 2024",
-    image: "/blog10.jpg",
+    image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf",
   },
   {
     title: "Managerial Role in Learning Strategy",
     category: "Leadership",
     date: "August 10, 2024",
-    image: "/blog11.jpg",
+    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
   },
   {
     title: "Breaking Silos with Cross-functional Training",
     category: "Collaboration",
     date: "August 1, 2024",
-    image: "/blog12.jpg",
+    image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0",
   },
 ];
 
