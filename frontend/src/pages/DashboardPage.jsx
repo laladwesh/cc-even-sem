@@ -155,8 +155,8 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="bg-[#e7d9f9] w-full px-4 sm:px-6 lg:px-36 py-12">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+    <div className="bg-[#e7d9f9] w-full px-4 sm:px-6 lg:px-36 py-24">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-semibold mb-4">
         Training Dashboard
       </h2>
 

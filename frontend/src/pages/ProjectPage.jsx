@@ -148,6 +148,9 @@ const ProjectPage = () => {
 
   return (
     <div className="bg-background min-h-screen p-24">
+      <h2 className="text-2xl py-6 sm:text-3xl md:text-4xl lg:text-4xl font-semibold mb-4">
+        Project Allocation
+      </h2>
       {/* Dashboard Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[

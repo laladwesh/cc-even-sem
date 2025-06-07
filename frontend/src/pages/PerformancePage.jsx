@@ -26,9 +26,9 @@ const iconMap = {
 };
 
 const PerformanceAndRewards = () => {
-  return (
+  return (<div className="py-16 bg-background">
     <div className="bg-background min-h-screen px-4 sm:px-6 md:px-12 lg:px-36 py-6 sm:py-8 md:py-12">
-      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold mb-4">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-semibold mb-4">
         Performance & Rewards
       </h2>
 
@@ -148,6 +148,7 @@ const PerformanceAndRewards = () => {
           );
         })}
       </div>
+    </div>
     </div>
   );
 };
