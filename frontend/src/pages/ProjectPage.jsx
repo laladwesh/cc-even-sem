@@ -108,7 +108,7 @@ const ProjectPage = () => {
     Completed: "bg-green-500 text-white",
   };
 
-  const { getToken } = useAuth(); // Assuming useAuth is a custom hook to get auth context
+  const { getToken } = useAuth();
 
   const loadMyProjects = async () => {
       try {

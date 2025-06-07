@@ -15,7 +15,7 @@ const LoginPage = () => {
   // Redirect if already signed in
   useEffect(() => {
     if (isSignedIn) {
-      navigate("/dashboard");
+      navigate("/");
     }
   }, [isSignedIn, navigate]);
 
@@ -69,7 +69,7 @@ const LoginPage = () => {
                     fontFamily: "Inter, sans-serif",
                   },
                 }}
-                redirectUrl="/dashboard"
+                redirectUrl="/"
               />
             ) : (
               <SignIn
@@ -101,7 +101,7 @@ const LoginPage = () => {
                     fontFamily: "Inter, sans-serif",
                   },
                 }}
-                redirectUrl="/dashboard"
+                redirectUrl="/"
               />
             )}
 
